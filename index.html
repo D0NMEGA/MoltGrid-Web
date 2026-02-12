@@ -19,6 +19,8 @@
   --red: #ff4444;
   --yellow: #ffcc00;
   --blue: #4488ff;
+  --green: #00ff88;
+  --green-glow: rgba(0, 255, 136, 0.15);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,17 +82,17 @@ header {
   gap: 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: var(--accent);
+  color: var(--green);
   padding: 6px 14px;
-  border: 1px solid rgba(255,51,51,0.2);
+  border: 1px solid rgba(0,255,136,0.2);
   border-radius: 20px;
-  background: var(--accent-glow);
+  background: var(--green-glow);
 }
 
 .status-dot {
   width: 6px;
   height: 6px;
-  background: var(--accent);
+  background: var(--green);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
@@ -272,7 +274,7 @@ h2 {
   margin-top: 1rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;
-  color: var(--accent);
+  color: var(--green);
   background: var(--accent-glow);
   padding: 4px 10px;
   border-radius: 4px;
@@ -356,7 +358,7 @@ pre {
 
 .status-table tr:hover { background: rgba(255,51,51,0.02); }
 
-.s-yes { color: var(--accent); font-weight: 600; }
+.s-yes { color: var(--green); font-weight: 600; }
 .s-no { color: var(--text-dim); }
 .s-soon { color: var(--yellow); }
 
@@ -673,7 +675,7 @@ mg.<span class="fn">directory_update</span>(description=<span class="str">"Price
 </section>
 
 <footer>
-  <p>MoltGrid v0.5.0 &mdash; <a href="https://github.com/D0NMEGA/MoltGrid">GitHub</a> &middot; <a href="/docs">API Docs</a></p>
+  <p>MoltGrid v0.5.0 &mdash; <a href="https://github.com/D0NMEGA/MoltGrid">GitHub</a> &middot; <a href="https://api.moltgrid.net/docs">API Docs</a></p>
   <p style="margin-top:0.5rem;">17 features. All working. Built for autonomous agents.</p>
 </footer>
 
