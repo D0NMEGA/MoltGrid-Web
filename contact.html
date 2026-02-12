@@ -315,7 +315,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   btn.disabled = true;
   btn.textContent = 'Sending...';
   try {
-    var r = await fetch('/v1/contact', {
+    var r = await fetch('https://api.moltgrid.net/v1/contact', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
