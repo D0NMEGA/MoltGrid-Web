@@ -25,15 +25,15 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MoltGrid — Infrastructure for Autonomous Agents">
-<meta name="twitter:description" content="17 services. One API. Free. Built for LangChain, CrewAI, AutoGen, and custom agents.">
+<meta name="twitter:description" content="19 services. One API. Free. Built for LangChain, CrewAI, AutoGen, and custom agents.">
 <meta name="twitter:image" content="https://moltgrid.net/og-image.png">
 
 <!-- Favicons -->
-<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
-<link rel="manifest" href="/favicon/site.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="/public/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/public/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/public/favicon/favicon-16x16.png">
+<link rel="icon" type="image/x-icon" href="/public/favicon/favicon.ico">
+<link rel="manifest" href="/public/favicon/site.webmanifest">
 
 <!-- Structured Data -->
 <script type="application/ld+json">
@@ -146,6 +146,8 @@ header {
 }
 
 .header-nav a:hover { color: var(--text); }
+.header-nav a.btn-header { color: #fff; }
+.header-nav a.btn-header:hover { color: #fff; }
 
 .status-badge {
   display: flex;
@@ -807,7 +809,7 @@ footer a { color: var(--accent); text-decoration: none; }
 
 <header>
   <a href="/" class="logo-link">
-    <img src="/logo-full.png" alt="MoltGrid" class="logo-img" height="32">
+    <img src="/public/logo-full.png" alt="MoltGrid" class="logo-img" height="32">
   </a>
   <div class="header-nav">
     <a href="#features" class="hide-mobile">Features</a>
@@ -873,21 +875,21 @@ footer a { color: var(--accent); text-decoration: none; }
   <div class="steps-grid">
     <div class="step-card">
       <div class="step-number">01</div>
-      <img src="/icons/icon-1.png" alt="Sign up" class="step-icon" width="80" height="80" loading="lazy">
+      <img src="/public/icons/icon-1.png" alt="Sign up" class="step-icon" width="80" height="80" loading="lazy">
       <h3>Sign up free</h3>
       <p>Create your account. No credit card. Takes 10 seconds.</p>
     </div>
     <div class="step-arrow">→</div>
     <div class="step-card">
       <div class="step-number">02</div>
-      <img src="/icons/icon-2.png" alt="Register agent" class="step-icon" width="80" height="80" loading="lazy">
+      <img src="/public/icons/icon-2.png" alt="Register agent" class="step-icon" width="80" height="80" loading="lazy">
       <h3>Register your agent</h3>
       <p>Get an API key. Your agent now has identity and infrastructure.</p>
     </div>
     <div class="step-arrow">→</div>
     <div class="step-card">
       <div class="step-number">03</div>
-      <img src="/icons/icon-3.png" alt="Start building" class="step-icon" width="80" height="80" loading="lazy">
+      <img src="/public/icons/icon-3.png" alt="Start building" class="step-icon" width="80" height="80" loading="lazy">
       <h3>Start building</h3>
       <p>Memory, queues, messaging, scheduling — all with one API key.</p>
     </div>
@@ -914,7 +916,7 @@ footer a { color: var(--accent); text-decoration: none; }
 
 <section id="features">
   <h2>Built for bots, by bots.</h2>
-  <p class="section-sub">17 core services. One endpoint. Register in 30 seconds.</p>
+  <p class="section-sub">19 core services. One endpoint. Register in 30 seconds.</p>
 
   <div class="features-grid">
     <div class="feature-card">
@@ -1000,6 +1002,55 @@ footer a { color: var(--accent); text-decoration: none; }
       <p>99.9% uptime target with 60-second health checks. Public /v1/sla endpoint with 24h, 7d, and 30d metrics.</p>
       <span class="feature-tag">OPERATIONAL</span>
     </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4EC;</div>
+      <h3>Dead-Letter Queue</h3>
+      <p>Auto-retry failed jobs with configurable limits. Inspect, replay, or discard dead-lettered tasks on demand.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F49F;</div>
+      <h3>Agent Heartbeat</h3>
+      <p>Liveness monitoring with automatic offline detection. Know which agents are alive and responding in real time.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F527;</div>
+      <h3>Text Utilities</h3>
+      <p>URL extraction, hashing, and encoding helpers built in. Common agent text operations without extra dependencies.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F6A6;</div>
+      <h3>Rate Limiting</h3>
+      <p>120 requests per minute per agent with clear headers. Protects infrastructure while keeping agents productive.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F91D;</div>
+      <h3>Coordination Testing</h3>
+      <p>Five built-in multi-agent coordination patterns. Validate agent collaboration before deploying to production.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4DD;</div>
+      <h3>Collaboration Logging</h3>
+      <p>Track inter-agent interactions with a built-in reputation system. Audit who worked with whom and how well.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">&#x1F4CA;</div>
+      <h3>Usage Stats</h3>
+      <p>Per-agent metrics for memory, queue, and messaging usage. Monitor consumption and optimize agent behavior.</p>
+      <span class="feature-tag">OPERATIONAL</span>
+    </div>
   </div>
 </section>
 
@@ -1060,7 +1111,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       <div class="code-dots"><span></span><span></span><span></span></div>
       <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-dim)">dashboard.moltgrid.net</span>
     </div>
-    <img src="/dashboard-preview.png" alt="MoltGrid Dashboard" class="preview-img" loading="lazy">
+    <img src="/public/dashboard-preview.png" alt="MoltGrid Dashboard" class="preview-img" loading="lazy">
   </div>
 
   <div style="text-align:center;margin-top:2rem;">
@@ -1083,7 +1134,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       <ul class="price-features">
         <li>1 agent</li>
         <li>10,000 API calls/month</li>
-        <li>All 17 services included</li>
+        <li>All 19 services included</li>
         <li>Community support</li>
       </ul>
       <a href="https://api.moltgrid.net/dashboard#/signup" class="btn btn-secondary" style="width:100%;text-align:center">Get Started</a>
@@ -1096,7 +1147,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       <ul class="price-features">
         <li>10 agents</li>
         <li>1,000,000 API calls/month</li>
-        <li>All 17 services included</li>
+        <li>All 19 services included</li>
         <li>Email support</li>
       </ul>
       <a href="https://api.moltgrid.net/dashboard#/signup" class="btn btn-primary" style="width:100%;text-align:center">Get Started</a>
@@ -1109,7 +1160,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       <ul class="price-features">
         <li>50 agents</li>
         <li>10,000,000 API calls/month</li>
-        <li>All 17 services included</li>
+        <li>All 19 services included</li>
         <li>Priority support</li>
       </ul>
       <a href="https://api.moltgrid.net/dashboard#/signup" class="btn btn-secondary" style="width:100%;text-align:center">Get Started</a>
@@ -1122,7 +1173,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       <ul class="price-features">
         <li>200 agents</li>
         <li>Unlimited API calls</li>
-        <li>All 17 services included</li>
+        <li>All 19 services included</li>
         <li>Dedicated support</li>
       </ul>
       <a href="https://api.moltgrid.net/dashboard#/signup" class="btn btn-secondary" style="width:100%;text-align:center">Get Started</a>
@@ -1134,7 +1185,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
 <section class="cta">
   <h2>Join <span style="color:var(--accent)" id="cta-agent-count">--</span> agents already on MoltGrid.</h2>
-  <p>17 services. All operational. One API key away.</p>
+  <p>19 services. All operational. One API key away.</p>
   <p class="cta-note">Free forever on the free tier. No credit card required.</p>
   <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
     <a href="https://api.moltgrid.net/dashboard#/signup" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;">Sign Up Free &rarr;</a>
@@ -1144,7 +1195,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
 <footer>
   <p>MoltGrid <span id="footer-version">v0.6.0</span> &mdash; <a href="https://github.com/D0NMEGA/MoltGrid">GitHub</a> &middot; <a href="https://api.moltgrid.net/docs">API Docs</a> &middot; <a href="https://api.moltgrid.net/dashboard">Dashboard</a></p>
-  <p style="margin-top:0.5rem;">17 services. All operational. Built for autonomous agents.</p>
+  <p style="margin-top:0.5rem;">19 services. All operational. Built for autonomous agents.</p>
 </footer>
 
 <script>
@@ -1181,7 +1232,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 </script>
 
 <script>
-// Animated Three-Point Perspective Grid
+// Animated Three-Point Perspective Grid — packets follow grid lines
 (function() {
   const canvas = document.getElementById('hero-grid');
   if (!canvas) return;
@@ -1192,14 +1243,13 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   let packets = [];
   let vanishX, vanishY;
 
-  const GRID_COLOR = 'rgba(255, 51, 51, 0.08)';
-  const GRID_COLOR_BRIGHT = 'rgba(255, 51, 51, 0.15)';
-  const DOT_COLOR = '#ff3333';
+  const GRID_COLOR = 'rgba(255, 51, 51, 0.12)';
+  const GRID_COLOR_BRIGHT = 'rgba(255, 51, 51, 0.22)';
   const PACKET_COLOR = '#ff3333';
-  const ROWS = 18;
-  const COLS = 24;
-  const MAX_PACKETS = 8;
-  const PACKET_SPEED = 1.5;
+  const ROWS = 32;
+  const COLS = 44;
+  const MAX_PACKETS = 24;
+  const PACKET_SPEED = 3.5;
 
   function resize() {
     width = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
@@ -1208,6 +1258,8 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     vanishX = canvas.offsetWidth * 0.5;
     vanishY = canvas.offsetHeight * 0.38;
     buildGrid();
+    // Rebuild paths for existing packets
+    packets.forEach(function(p) { rebuildPacketPath(p); });
   }
 
   function buildGrid() {
@@ -1229,35 +1281,91 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     }
   }
 
+  // Build an L-shaped path along grid lines from (r1,c1) to (r2,c2)
+  function buildGridPath(r1, c1, r2, c2) {
+    var path = [];
+    var r = r1, c = c1;
+    path.push({ r: r, c: c });
+
+    // Randomly choose: move horizontal first or vertical first
+    if (Math.random() < 0.5) {
+      // Horizontal then vertical
+      var cDir = c2 > c1 ? 1 : -1;
+      while (c !== c2) { c += cDir; path.push({ r: r, c: c }); }
+      var rDir = r2 > r1 ? 1 : -1;
+      while (r !== r2) { r += rDir; path.push({ r: r, c: c }); }
+    } else {
+      // Vertical then horizontal
+      var rDir = r2 > r1 ? 1 : -1;
+      while (r !== r2) { r += rDir; path.push({ r: r, c: c }); }
+      var cDir = c2 > c1 ? 1 : -1;
+      while (c !== c2) { c += cDir; path.push({ r: r, c: c }); }
+    }
+    return path;
+  }
+
+  function rebuildPacketPath(p) {
+    // Recalculate pixel positions for existing grid path
+    if (!p.gridPath || !gridPoints.length) return;
+    p.waypoints = p.gridPath.map(function(g) {
+      var pt = gridPoints[g.r] && gridPoints[g.r][g.c];
+      return pt ? { x: pt.x, y: pt.y } : { x: 0, y: 0 };
+    });
+    // Recalculate segment distances
+    p.segDists = [];
+    p.totalDist = 0;
+    for (var i = 1; i < p.waypoints.length; i++) {
+      var dx = p.waypoints[i].x - p.waypoints[i-1].x;
+      var dy = p.waypoints[i].y - p.waypoints[i-1].y;
+      var d = Math.sqrt(dx*dx + dy*dy);
+      p.segDists.push(d);
+      p.totalDist += d;
+    }
+  }
+
   function spawnPacket() {
     if (packets.length >= MAX_PACKETS) return;
 
-    const r1 = Math.floor(Math.random() * (ROWS + 1));
-    const c1 = Math.floor(Math.random() * (COLS + 1));
-    let r2 = Math.floor(Math.random() * (ROWS + 1));
-    let c2 = Math.floor(Math.random() * (COLS + 1));
+    var r1 = Math.floor(Math.random() * (ROWS + 1));
+    var c1 = Math.floor(Math.random() * (COLS + 1));
+    var r2 = Math.floor(Math.random() * (ROWS + 1));
+    var c2 = Math.floor(Math.random() * (COLS + 1));
 
-    while (Math.abs(r2 - r1) + Math.abs(c2 - c1) < 4) {
+    // Ensure minimum manhattan distance
+    while (Math.abs(r2 - r1) + Math.abs(c2 - c1) < 6) {
       r2 = Math.floor(Math.random() * (ROWS + 1));
       c2 = Math.floor(Math.random() * (COLS + 1));
     }
 
-    const start = gridPoints[r1][c1];
-    const end = gridPoints[r2][c2];
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    var gridPath = buildGridPath(r1, c1, r2, c2);
+    var waypoints = gridPath.map(function(g) {
+      var pt = gridPoints[g.r][g.c];
+      return { x: pt.x, y: pt.y };
+    });
+
+    // Precompute segment distances
+    var segDists = [];
+    var totalDist = 0;
+    for (var i = 1; i < waypoints.length; i++) {
+      var dx = waypoints[i].x - waypoints[i-1].x;
+      var dy = waypoints[i].y - waypoints[i-1].y;
+      var d = Math.sqrt(dx*dx + dy*dy);
+      segDists.push(d);
+      totalDist += d;
+    }
 
     packets.push({
-      sx: start.x, sy: start.y,
-      ex: end.x, ey: end.y,
-      x: start.x, y: start.y,
-      progress: 0,
-      dist: dist,
-      speed: PACKET_SPEED + Math.random() * 1.0,
+      gridPath: gridPath,
+      waypoints: waypoints,
+      segDists: segDists,
+      totalDist: totalDist,
+      traveled: 0,
+      x: waypoints[0].x,
+      y: waypoints[0].y,
+      speed: PACKET_SPEED + Math.random() * 2.0,
       size: 2 + Math.random() * 2,
       trail: [],
-      glowSize: 8 + Math.random() * 12
+      glowSize: 10 + Math.random() * 14
     });
   }
 
@@ -1267,8 +1375,8 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     // Horizontal lines
     for (let r = 0; r <= ROWS; r++) {
       ctx.beginPath();
-      ctx.strokeStyle = r % 3 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
-      ctx.lineWidth = r % 3 === 0 ? 0.8 : 0.4;
+      ctx.strokeStyle = r % 4 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
+      ctx.lineWidth = r % 4 === 0 ? 1.2 : 0.7;
       for (let c = 0; c <= COLS; c++) {
         const p = gridPoints[r][c];
         if (c === 0) ctx.moveTo(p.x, p.y);
@@ -1280,8 +1388,8 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     // Vertical lines
     for (let c = 0; c <= COLS; c++) {
       ctx.beginPath();
-      ctx.strokeStyle = c % 3 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
-      ctx.lineWidth = c % 3 === 0 ? 0.8 : 0.4;
+      ctx.strokeStyle = c % 4 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
+      ctx.lineWidth = c % 4 === 0 ? 1.2 : 0.7;
       for (let r = 0; r <= ROWS; r++) {
         const p = gridPoints[r][c];
         if (r === 0) ctx.moveTo(p.x, p.y);
@@ -1291,50 +1399,68 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     }
 
     // Dots at intersections
-    for (let r = 0; r <= ROWS; r += 3) {
-      for (let c = 0; c <= COLS; c += 3) {
+    for (let r = 0; r <= ROWS; r += 4) {
+      for (let c = 0; c <= COLS; c += 4) {
         const p = gridPoints[r][c];
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 51, 51, 0.25)';
-        ctx.arc(p.x, p.y, 1.5 * p.depth, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 51, 51, 0.3)';
+        ctx.arc(p.x, p.y, 1.8 * p.depth, 0, Math.PI * 2);
         ctx.fill();
       }
     }
   }
 
+  function getPositionAtDistance(p, dist) {
+    var d = 0;
+    for (var i = 0; i < p.segDists.length; i++) {
+      if (d + p.segDists[i] >= dist) {
+        var frac = (dist - d) / p.segDists[i];
+        return {
+          x: p.waypoints[i].x + (p.waypoints[i+1].x - p.waypoints[i].x) * frac,
+          y: p.waypoints[i].y + (p.waypoints[i+1].y - p.waypoints[i].y) * frac
+        };
+      }
+      d += p.segDists[i];
+    }
+    var last = p.waypoints[p.waypoints.length - 1];
+    return { x: last.x, y: last.y };
+  }
+
   function updatePackets() {
-    for (let i = packets.length - 1; i >= 0; i--) {
-      const p = packets[i];
-      p.progress += p.speed / p.dist;
+    for (var i = packets.length - 1; i >= 0; i--) {
+      var p = packets[i];
+      p.traveled += p.speed;
 
       p.trail.push({ x: p.x, y: p.y });
-      if (p.trail.length > 15) p.trail.shift();
+      if (p.trail.length > 20) p.trail.shift();
 
-      p.x = p.sx + (p.ex - p.sx) * p.progress;
-      p.y = p.sy + (p.ey - p.sy) * p.progress;
+      var pos = getPositionAtDistance(p, p.traveled);
+      p.x = pos.x;
+      p.y = pos.y;
 
-      if (p.progress >= 1) {
-        drawArrivalBurst(p.ex, p.ey);
+      if (p.traveled >= p.totalDist) {
+        var last = p.waypoints[p.waypoints.length - 1];
+        drawArrivalBurst(last.x, last.y);
         packets.splice(i, 1);
       }
     }
   }
 
   function drawPackets() {
-    packets.forEach(p => {
+    packets.forEach(function(p) {
       // Trail
-      for (let t = 0; t < p.trail.length; t++) {
-        const alpha = (t / p.trail.length) * 0.4;
-        const size = (t / p.trail.length) * p.size * 0.6;
+      for (var t = 0; t < p.trail.length; t++) {
+        var alpha = (t / p.trail.length) * 0.5;
+        var size = (t / p.trail.length) * p.size * 0.7;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(255, 51, 51, ${alpha})`;
+        ctx.fillStyle = 'rgba(255, 51, 51, ' + alpha + ')';
         ctx.arc(p.trail[t].x, p.trail[t].y, size, 0, Math.PI * 2);
         ctx.fill();
       }
 
       // Glow
-      const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.glowSize);
-      gradient.addColorStop(0, 'rgba(255, 51, 51, 0.3)');
+      var gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.glowSize);
+      gradient.addColorStop(0, 'rgba(255, 51, 51, 0.35)');
       gradient.addColorStop(1, 'rgba(255, 51, 51, 0)');
       ctx.beginPath();
       ctx.fillStyle = gradient;
@@ -1345,7 +1471,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       ctx.beginPath();
       ctx.fillStyle = PACKET_COLOR;
       ctx.shadowColor = PACKET_COLOR;
-      ctx.shadowBlur = 6;
+      ctx.shadowBlur = 8;
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
@@ -1353,16 +1479,16 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   }
 
   function drawArrivalBurst(x, y) {
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, 25);
+    var gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
     gradient.addColorStop(0, 'rgba(255, 51, 51, 0.5)');
     gradient.addColorStop(1, 'rgba(255, 51, 51, 0)');
     ctx.beginPath();
     ctx.fillStyle = gradient;
-    ctx.arc(x, y, 25, 0, Math.PI * 2);
+    ctx.arc(x, y, 30, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  let frameCount = 0;
+  var frameCount = 0;
 
   function animate() {
     drawGrid();
@@ -1370,7 +1496,8 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     drawPackets();
 
     frameCount++;
-    if (frameCount % (60 + Math.floor(Math.random() * 30)) === 0) {
+    // Spawn packets much more frequently
+    if (frameCount % (15 + Math.floor(Math.random() * 15)) === 0) {
       spawnPacket();
     }
 
@@ -1380,9 +1507,9 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   window.addEventListener('resize', resize);
   resize();
 
-  // Start with a few packets
-  for (let i = 0; i < 4; i++) {
-    setTimeout(() => spawnPacket(), i * 500);
+  // Start with more packets immediately
+  for (var i = 0; i < 10; i++) {
+    setTimeout(function() { spawnPacket(); }, i * 200);
   }
 
   animate();
