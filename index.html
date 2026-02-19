@@ -193,7 +193,7 @@ header {
 .hero {
   position: relative;
   overflow: hidden;
-  min-height: 90vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1234,23 +1234,23 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 <script>
 // 3D Wireframe Box Grid — packets flow across floor, walls, and back plane
 (function() {
-  const canvas = document.getElementById('hero-grid');
+  var canvas = document.getElementById('hero-grid');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
 
-  let width, height, vanishX, vanishY;
-  let grid = {};
-  let packets = [];
+  var width, height, vanishX, vanishY;
+  var grid = {};
+  var packets = [];
 
-  const COLS = 44;
-  const ROWS = 24;
-  const DEPTH = 28;
-  const MAX_PACKETS = 30;
-  const PACKET_SPEED = 3.0;
-  const PACKET_COLOR = '#ff3333';
+  var COLS = 44;
+  var ROWS = 24;
+  var DEPTH = 28;
+  var MAX_PACKETS = 120;
+  var BASE_SPEED = 2.5;
+  var PACKET_COLOR = '#ff3333';
 
-  const PLANES = ['bottom', 'back', 'left', 'right'];
-  const PLANE_DIMS = {
+  var PLANES = ['bottom', 'back', 'left', 'right'];
+  var PLANE_DIMS = {
     bottom: { rows: DEPTH, cols: COLS },
     back:   { rows: ROWS, cols: COLS },
     left:   { rows: ROWS, cols: DEPTH },
@@ -1259,10 +1259,10 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
   function project(nx, ny, nz) {
     var w = canvas.offsetWidth, h = canvas.offsetHeight;
-    var scale = 1 - nz * 0.6;
+    var scale = 1 - nz * 0.55;
     return {
-      x: vanishX + nx * w * 0.5 * scale,
-      y: vanishY + ny * h * 0.6 * scale,
+      x: vanishX + nx * w * 0.55 * scale,
+      y: vanishY + ny * h * 0.62 * scale,
       z3: nz, scale: scale
     };
   }
@@ -1272,7 +1272,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     height = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     vanishX = canvas.offsetWidth * 0.5;
-    vanishY = canvas.offsetHeight * 0.32;
+    vanishY = canvas.offsetHeight * 0.28;
     buildGrid();
     packets.forEach(rebuildPacketPath);
   }
@@ -1280,13 +1280,13 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   function buildGrid() {
     grid = { bottom: [], back: [], left: [], right: [] };
 
-    // Bottom plane (X-Z) at y=0.5
+    // Bottom plane (X-Z floor) at y=0.6
     for (var z = 0; z <= DEPTH; z++) {
       var row = [];
       for (var x = 0; x <= COLS; x++) {
         var nx = (x / COLS) * 2 - 1;
         var nz = z / DEPTH;
-        row.push(project(nx, 0.55, nz));
+        row.push(project(nx, 0.6, nz));
       }
       grid.bottom.push(row);
     }
@@ -1296,7 +1296,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       var row = [];
       for (var x = 0; x <= COLS; x++) {
         var nx = (x / COLS) * 2 - 1;
-        var ny = 0.55 - (y / ROWS) * 0.85;
+        var ny = 0.6 - (y / ROWS) * 1.1;
         row.push(project(nx, ny, 1));
       }
       grid.back.push(row);
@@ -1307,7 +1307,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       var row = [];
       for (var z = 0; z <= DEPTH; z++) {
         var nz = z / DEPTH;
-        var ny = 0.55 - (y / ROWS) * 0.85;
+        var ny = 0.6 - (y / ROWS) * 1.1;
         row.push(project(-1, ny, nz));
       }
       grid.left.push(row);
@@ -1318,7 +1318,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       var row = [];
       for (var z = 0; z <= DEPTH; z++) {
         var nz = z / DEPTH;
-        var ny = 0.55 - (y / ROWS) * 0.85;
+        var ny = 0.6 - (y / ROWS) * 1.1;
         row.push(project(1, ny, nz));
       }
       grid.right.push(row);
@@ -1334,7 +1334,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
         var a = baseAlpha * (1 - p.z3 * 0.5);
         if (c === 0) {
           ctx.strokeStyle = 'rgba(255,51,51,' + (bright ? a * 1.8 : a) + ')';
-          ctx.lineWidth = bright ? 1.0 : 0.5;
+          ctx.lineWidth = bright ? 2.5 : 1.2;
           ctx.moveTo(p.x, p.y);
         } else ctx.lineTo(p.x, p.y);
       }
@@ -1348,7 +1348,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
         var a = baseAlpha * (1 - p.z3 * 0.5);
         if (r === 0) {
           ctx.strokeStyle = 'rgba(255,51,51,' + (bright ? a * 1.8 : a) + ')';
-          ctx.lineWidth = bright ? 1.0 : 0.5;
+          ctx.lineWidth = bright ? 2.5 : 1.2;
           ctx.moveTo(p.x, p.y);
         } else ctx.lineTo(p.x, p.y);
       }
@@ -1356,11 +1356,10 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     }
   }
 
-  // Edge glow at plane intersections
   function drawEdge(p1, p2) {
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(255,51,51,0.35)';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(255,51,51,0.45)';
+    ctx.lineWidth = 3;
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
     ctx.stroke();
@@ -1368,24 +1367,17 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
   function drawGrid() {
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-    // Draw back first (farthest), then walls, then bottom (closest)
     drawPlane(grid.back, ROWS, COLS, 0.08);
     drawPlane(grid.left, ROWS, DEPTH, 0.10);
     drawPlane(grid.right, ROWS, DEPTH, 0.10);
     drawPlane(grid.bottom, DEPTH, COLS, 0.14);
 
     // Glowing edges where planes meet
-    // Bottom-left edge
     drawEdge(grid.bottom[0][0], grid.bottom[DEPTH][0]);
-    // Bottom-right edge
     drawEdge(grid.bottom[0][COLS], grid.bottom[DEPTH][COLS]);
-    // Bottom-back edge
     drawEdge(grid.bottom[DEPTH][0], grid.bottom[DEPTH][COLS]);
-    // Left-back vertical
     drawEdge(grid.left[0][DEPTH], grid.left[ROWS][DEPTH]);
-    // Right-back vertical
     drawEdge(grid.right[0][DEPTH], grid.right[ROWS][DEPTH]);
-    // Back top edge
     drawEdge(grid.back[ROWS][0], grid.back[ROWS][COLS]);
 
     // Dots at intersections on bottom plane
@@ -1393,104 +1385,121 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       for (var c = 0; c <= COLS; c += 4) {
         var p = grid.bottom[r][c];
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255,51,51,' + (0.3 * (1 - p.z3 * 0.5)) + ')';
-        ctx.arc(p.x, p.y, 1.5 * p.scale, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,51,51,' + (0.35 * (1 - p.z3 * 0.5)) + ')';
+        ctx.arc(p.x, p.y, 2.2 * p.scale, 0, Math.PI * 2);
         ctx.fill();
       }
     }
   }
 
-  // --- Multi-plane pathfinding ---
-  function getPlaneGrid(plane) { return grid[plane]; }
-  function getPlaneDims(plane) { return PLANE_DIMS[plane]; }
+  // --- Node z3 lookup ---
+  function nodeZ3(node) {
+    var g = grid[node.plane];
+    if (!g || !g[node.r] || !g[node.r][node.c]) return 0.5;
+    return g[node.r][node.c].z3;
+  }
 
-  function getNeighbors(node) {
+  // --- Robust cross-plane pathfinding ---
+  function buildLPath(plane, sr, sc, er, ec) {
+    var path = [];
+    var r = sr, c = sc;
+    if (Math.random() < 0.5) {
+      var cd = ec > c ? 1 : -1;
+      while (c !== ec) { c += cd; path.push({ plane: plane, r: r, c: c }); }
+      var rd = er > r ? 1 : -1;
+      while (r !== er) { r += rd; path.push({ plane: plane, r: r, c: c }); }
+    } else {
+      var rd = er > r ? 1 : -1;
+      while (r !== er) { r += rd; path.push({ plane: plane, r: r, c: c }); }
+      var cd = ec > c ? 1 : -1;
+      while (c !== ec) { c += cd; path.push({ plane: plane, r: r, c: c }); }
+    }
+    return path;
+  }
+
+  // Walk from a wall node to the shared edge with bottom, returning {path, bottomNode}
+  function wallToBottomEdge(node) {
+    var path = [];
     var plane = node.plane, r = node.r, c = node.c;
-    var dims = getPlaneDims(plane);
-    var neighbors = [];
+    if (plane === 'left') {
+      // left row=0 is shared edge with bottom. Walk r toward 0, then transition.
+      while (r > 0) { r--; path.push({ plane: 'left', r: r, c: c }); }
+      // At left[0][c], transition to bottom[c][0]
+      return { path: path, bottomNode: { plane: 'bottom', r: c, c: 0 } };
+    } else if (plane === 'right') {
+      while (r > 0) { r--; path.push({ plane: 'right', r: r, c: c }); }
+      return { path: path, bottomNode: { plane: 'bottom', r: c, c: COLS } };
+    } else if (plane === 'back') {
+      while (r > 0) { r--; path.push({ plane: 'back', r: r, c: c }); }
+      return { path: path, bottomNode: { plane: 'bottom', r: DEPTH, c: c } };
+    }
+    return { path: [], bottomNode: node };
+  }
 
-    if (r > 0) neighbors.push({ plane: plane, r: r-1, c: c });
-    if (r < dims.rows) neighbors.push({ plane: plane, r: r+1, c: c });
-    if (c > 0) neighbors.push({ plane: plane, r: r, c: c-1 });
-    if (c < dims.cols) neighbors.push({ plane: plane, r: r, c: c+1 });
-
-    // Cross-plane transitions
-    if (plane === 'bottom' && c === 0)         neighbors.push({ plane: 'left', r: 0, c: r });
-    if (plane === 'bottom' && c === dims.cols)  neighbors.push({ plane: 'right', r: 0, c: r });
-    if (plane === 'bottom' && r === dims.rows)  neighbors.push({ plane: 'back', r: 0, c: c });
-    if (plane === 'left'   && r === 0)          neighbors.push({ plane: 'bottom', r: c, c: 0 });
-    if (plane === 'right'  && r === 0)          neighbors.push({ plane: 'bottom', r: c, c: COLS });
-    if (plane === 'back'   && r === 0)          neighbors.push({ plane: 'bottom', r: DEPTH, c: c });
-
-    return neighbors;
+  // Walk from bottom to the shared edge with a wall, returning path
+  function bottomToWallEdge(bottomNode, wallPlane) {
+    var path = [];
+    var r = bottomNode.r, c = bottomNode.c;
+    if (wallPlane === 'left') {
+      var cd = -1;
+      while (c > 0) { c += cd; path.push({ plane: 'bottom', r: r, c: c }); }
+      // Transition: bottom[r][0] -> left[0][r]
+      path.push({ plane: 'left', r: 0, c: r });
+      return { path: path, wallNode: { plane: 'left', r: 0, c: r } };
+    } else if (wallPlane === 'right') {
+      while (c < COLS) { c++; path.push({ plane: 'bottom', r: r, c: c }); }
+      path.push({ plane: 'right', r: 0, c: r });
+      return { path: path, wallNode: { plane: 'right', r: 0, c: r } };
+    } else if (wallPlane === 'back') {
+      while (r < DEPTH) { r++; path.push({ plane: 'bottom', r: r, c: c }); }
+      path.push({ plane: 'back', r: 0, c: c });
+      return { path: path, wallNode: { plane: 'back', r: 0, c: c } };
+    }
+    return { path: [], wallNode: bottomNode };
   }
 
   function buildPath(startNode, endNode) {
-    // L-shaped path within a plane, with one optional cross-plane hop
-    var path = [];
-    var r = startNode.r, c = startNode.c;
-    var plane = startNode.plane;
-    path.push({ plane: plane, r: r, c: c });
-
-    var tr = endNode.r, tc = endNode.c;
+    var path = [{ plane: startNode.plane, r: startNode.r, c: startNode.c }];
 
     if (startNode.plane === endNode.plane) {
-      // Same plane: L-shaped
-      if (Math.random() < 0.5) {
-        var cd = tc > c ? 1 : -1;
-        while (c !== tc) { c += cd; path.push({ plane: plane, r: r, c: c }); }
-        var rd = tr > r ? 1 : -1;
-        while (r !== tr) { r += rd; path.push({ plane: plane, r: r, c: c }); }
-      } else {
-        var rd = tr > r ? 1 : -1;
-        while (r !== tr) { r += rd; path.push({ plane: plane, r: r, c: c }); }
-        var cd = tc > c ? 1 : -1;
-        while (c !== tc) { c += cd; path.push({ plane: plane, r: r, c: c }); }
-      }
-    } else {
-      // Cross-plane: walk to edge, transition, then walk to dest
-      var dims = getPlaneDims(plane);
-      var edgeR, edgeC, transNode;
-
-      if (plane === 'bottom' && endNode.plane === 'left') {
-        edgeC = 0; edgeR = r;
-        while (c !== edgeC) { c += c > edgeC ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-        // Transition
-        path.push({ plane: 'left', r: 0, c: r });
-        plane = 'left'; r = 0; c = startNode.r;
-      } else if (plane === 'bottom' && endNode.plane === 'right') {
-        edgeC = dims.cols; edgeR = r;
-        while (c !== edgeC) { c += c > edgeC ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-        path.push({ plane: 'right', r: 0, c: startNode.r });
-        plane = 'right'; r = 0; c = startNode.r;
-      } else if (plane === 'bottom' && endNode.plane === 'back') {
-        edgeR = dims.rows;
-        while (r !== edgeR) { r += 1; path.push({ plane: plane, r: r, c: c }); }
-        path.push({ plane: 'back', r: 0, c: c });
-        plane = 'back'; r = 0;
-      } else {
-        // For other transitions, just do same-plane walk
-        tr = endNode.r; tc = endNode.c;
-      }
-
-      // Now walk to final dest in the new plane
-      tr = endNode.r; tc = endNode.c;
-      if (Math.random() < 0.5) {
-        while (c !== tc) { c += c > tc ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-        while (r !== tr) { r += r > tr ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-      } else {
-        while (r !== tr) { r += r > tr ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-        while (c !== tc) { c += c > tc ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
-      }
+      // Same plane: L-shaped path
+      path = path.concat(buildLPath(startNode.plane, startNode.r, startNode.c, endNode.r, endNode.c));
+      return path;
     }
+
+    // Cross-plane routing — always go through bottom as intermediary
+    if (startNode.plane === 'bottom') {
+      // Bottom -> Wall
+      var toEdge = bottomToWallEdge(startNode, endNode.plane);
+      path = path.concat(toEdge.path);
+      // Now on the wall, walk to destination
+      path = path.concat(buildLPath(endNode.plane, toEdge.wallNode.r, toEdge.wallNode.c, endNode.r, endNode.c));
+    } else if (endNode.plane === 'bottom') {
+      // Wall -> Bottom
+      var toBottom = wallToBottomEdge(startNode);
+      path = path.concat(toBottom.path);
+      // Now on bottom, walk to destination
+      path = path.concat(buildLPath('bottom', toBottom.bottomNode.r, toBottom.bottomNode.c, endNode.r, endNode.c));
+    } else {
+      // Wall -> different Wall: go Wall -> Bottom -> Wall
+      var toBottom = wallToBottomEdge(startNode);
+      path = path.concat(toBottom.path);
+      var br = toBottom.bottomNode.r, bc = toBottom.bottomNode.c;
+      // Walk across bottom toward the target wall edge
+      var toEdge = bottomToWallEdge(toBottom.bottomNode, endNode.plane);
+      path = path.concat(toEdge.path);
+      // Walk on destination wall to end
+      path = path.concat(buildLPath(endNode.plane, toEdge.wallNode.r, toEdge.wallNode.c, endNode.r, endNode.c));
+    }
+
     return path;
   }
 
   function nodeToPixel(node) {
     var g = grid[node.plane];
-    if (!g || !g[node.r] || !g[node.r][node.c]) return { x: 0, y: 0 };
+    if (!g || !g[node.r] || !g[node.r][node.c]) return { x: 0, y: 0, z3: 0.5, scale: 0.7 };
     var pt = g[node.r][node.c];
-    return { x: pt.x, y: pt.y };
+    return { x: pt.x, y: pt.y, z3: pt.z3, scale: pt.scale };
   }
 
   function computeWaypoints(gridPath) {
@@ -1516,7 +1525,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
   function randomNode() {
     var plane = PLANES[Math.floor(Math.random() * PLANES.length)];
-    var dims = getPlaneDims(plane);
+    var dims = PLANE_DIMS[plane];
     return {
       plane: plane,
       r: Math.floor(Math.random() * (dims.rows + 1)),
@@ -1530,7 +1539,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     var start = randomNode();
     var end = randomNode();
 
-    // Prefer cross-plane paths ~40% of time for visual interest
+    // Prefer cross-plane ~40%
     if (Math.random() < 0.4 && start.plane === end.plane) {
       end = randomNode();
     }
@@ -1556,10 +1565,11 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       traveled: 0,
       x: wp.waypoints[0].x,
       y: wp.waypoints[0].y,
-      speed: PACKET_SPEED + Math.random() * 2.0,
-      size: 2 + Math.random() * 2,
+      z3: wp.waypoints[0].z3 || 0,
+      baseSpeed: BASE_SPEED + Math.random() * 2.0,
+      baseSize: 2.5 + Math.random() * 2.5,
       trail: [],
-      glowSize: 10 + Math.random() * 14
+      baseGlow: 12 + Math.random() * 16
     });
   }
 
@@ -1567,61 +1577,88 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     var d = 0;
     for (var i = 0; i < p.segDists.length; i++) {
       if (d + p.segDists[i] >= dist) {
-        var frac = (dist - d) / p.segDists[i];
+        var frac = (dist - d) / (p.segDists[i] || 1);
+        var wp0 = p.waypoints[i], wp1 = p.waypoints[i+1];
         return {
-          x: p.waypoints[i].x + (p.waypoints[i+1].x - p.waypoints[i].x) * frac,
-          y: p.waypoints[i].y + (p.waypoints[i+1].y - p.waypoints[i].y) * frac
+          x: wp0.x + (wp1.x - wp0.x) * frac,
+          y: wp0.y + (wp1.y - wp0.y) * frac,
+          z3: wp0.z3 + (wp1.z3 - wp0.z3) * frac,
+          scale: wp0.scale + (wp1.scale - wp0.scale) * frac
         };
       }
       d += p.segDists[i];
     }
     var last = p.waypoints[p.waypoints.length - 1];
-    return { x: last.x, y: last.y };
+    return { x: last.x, y: last.y, z3: last.z3, scale: last.scale };
   }
 
   function updatePackets() {
     for (var i = packets.length - 1; i >= 0; i--) {
       var p = packets[i];
-      p.traveled += p.speed;
-      p.trail.push({ x: p.x, y: p.y });
-      if (p.trail.length > 20) p.trail.shift();
+      // Depth-based speed: faster when close (z3~0), slower when far (z3~1)
+      var depthScale = 1.5 - (p.z3 || 0) * 1.0;
+      if (depthScale < 0.3) depthScale = 0.3;
+      p.traveled += p.baseSpeed * depthScale;
+
+      p.trail.push({ x: p.x, y: p.y, z3: p.z3 });
+      if (p.trail.length > 22) p.trail.shift();
+
       var pos = getPositionAtDistance(p, p.traveled);
-      p.x = pos.x; p.y = pos.y;
+      p.x = pos.x; p.y = pos.y; p.z3 = pos.z3;
+      p.curScale = pos.scale;
+
       if (p.traveled >= p.totalDist) {
-        drawArrivalBurst(p.waypoints[p.waypoints.length-1].x, p.waypoints[p.waypoints.length-1].y);
+        drawArrivalBurst(p.x, p.y, pos.scale);
         packets.splice(i, 1);
       }
     }
   }
 
   function drawPackets() {
-    packets.forEach(function(p) {
+    for (var pi = 0; pi < packets.length; pi++) {
+      var p = packets[pi];
+      // Depth-based sizing: bigger when close, smaller when far
+      var depthMul = 1.6 - (p.z3 || 0) * 1.2;
+      if (depthMul < 0.3) depthMul = 0.3;
+      var curSize = p.baseSize * depthMul;
+      var curGlow = p.baseGlow * depthMul;
+
+      // Trail
       for (var t = 0; t < p.trail.length; t++) {
-        var alpha = (t / p.trail.length) * 0.5;
-        var sz = (t / p.trail.length) * p.size * 0.7;
+        var tf = (t / p.trail.length);
+        var tz3 = p.trail[t].z3 || 0;
+        var tDepth = 1.6 - tz3 * 1.2;
+        if (tDepth < 0.3) tDepth = 0.3;
+        var alpha = tf * 0.5;
+        var sz = tf * p.baseSize * 0.7 * tDepth;
         ctx.beginPath();
         ctx.fillStyle = 'rgba(255,51,51,' + alpha + ')';
         ctx.arc(p.trail[t].x, p.trail[t].y, sz, 0, Math.PI * 2);
         ctx.fill();
       }
-      var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.glowSize);
+
+      // Glow
+      var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, curGlow);
       grad.addColorStop(0, 'rgba(255,51,51,0.35)');
       grad.addColorStop(1, 'rgba(255,51,51,0)');
       ctx.beginPath(); ctx.fillStyle = grad;
-      ctx.arc(p.x, p.y, p.glowSize, 0, Math.PI * 2); ctx.fill();
+      ctx.arc(p.x, p.y, curGlow, 0, Math.PI * 2); ctx.fill();
+
+      // Dot
       ctx.beginPath(); ctx.fillStyle = PACKET_COLOR;
-      ctx.shadowColor = PACKET_COLOR; ctx.shadowBlur = 8;
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowColor = PACKET_COLOR; ctx.shadowBlur = 10 * depthMul;
+      ctx.arc(p.x, p.y, curSize, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
-    });
+    }
   }
 
-  function drawArrivalBurst(x, y) {
-    var grad = ctx.createRadialGradient(x, y, 0, x, y, 30);
+  function drawArrivalBurst(x, y, scale) {
+    var r = 35 * (scale || 0.7);
+    var grad = ctx.createRadialGradient(x, y, 0, x, y, r);
     grad.addColorStop(0, 'rgba(255,51,51,0.5)');
     grad.addColorStop(1, 'rgba(255,51,51,0)');
     ctx.beginPath(); ctx.fillStyle = grad;
-    ctx.arc(x, y, 30, 0, Math.PI * 2); ctx.fill();
+    ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
   }
 
   var frameCount = 0;
@@ -1630,13 +1667,15 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     updatePackets();
     drawPackets();
     frameCount++;
-    if (frameCount % (12 + Math.floor(Math.random() * 12)) === 0) spawnPacket();
+    // Spawn frequently to maintain ~120 packets
+    if (frameCount % 3 === 0) spawnPacket();
     requestAnimationFrame(animate);
   }
 
   window.addEventListener('resize', resize);
   resize();
-  for (var i = 0; i < 14; i++) setTimeout(spawnPacket, i * 150);
+  // Seed with many packets immediately
+  for (var i = 0; i < 60; i++) setTimeout(spawnPacket, i * 50);
   animate();
 })();
 </script>
