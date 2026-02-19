@@ -1232,120 +1232,270 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 </script>
 
 <script>
-// Animated Three-Point Perspective Grid — packets follow grid lines
+// 3D Wireframe Box Grid — packets flow across floor, walls, and back plane
 (function() {
   const canvas = document.getElementById('hero-grid');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  let width, height;
-  let gridPoints = [];
+  let width, height, vanishX, vanishY;
+  let grid = {};
   let packets = [];
-  let vanishX, vanishY;
 
-  const GRID_COLOR = 'rgba(255, 51, 51, 0.12)';
-  const GRID_COLOR_BRIGHT = 'rgba(255, 51, 51, 0.22)';
-  const PACKET_COLOR = '#ff3333';
-  const ROWS = 32;
   const COLS = 44;
-  const MAX_PACKETS = 24;
-  const PACKET_SPEED = 3.5;
+  const ROWS = 24;
+  const DEPTH = 28;
+  const MAX_PACKETS = 30;
+  const PACKET_SPEED = 3.0;
+  const PACKET_COLOR = '#ff3333';
+
+  const PLANES = ['bottom', 'back', 'left', 'right'];
+  const PLANE_DIMS = {
+    bottom: { rows: DEPTH, cols: COLS },
+    back:   { rows: ROWS, cols: COLS },
+    left:   { rows: ROWS, cols: DEPTH },
+    right:  { rows: ROWS, cols: DEPTH }
+  };
+
+  function project(nx, ny, nz) {
+    var w = canvas.offsetWidth, h = canvas.offsetHeight;
+    var scale = 1 - nz * 0.6;
+    return {
+      x: vanishX + nx * w * 0.5 * scale,
+      y: vanishY + ny * h * 0.6 * scale,
+      z3: nz, scale: scale
+    };
+  }
 
   function resize() {
     width = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
     height = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     vanishX = canvas.offsetWidth * 0.5;
-    vanishY = canvas.offsetHeight * 0.38;
+    vanishY = canvas.offsetHeight * 0.32;
     buildGrid();
-    // Rebuild paths for existing packets
-    packets.forEach(function(p) { rebuildPacketPath(p); });
+    packets.forEach(rebuildPacketPath);
   }
 
   function buildGrid() {
-    gridPoints = [];
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
+    grid = { bottom: [], back: [], left: [], right: [] };
 
-    for (let r = 0; r <= ROWS; r++) {
-      const row = [];
-      for (let c = 0; c <= COLS; c++) {
-        const nx = (c / COLS) * 2 - 1;
-        const ny = (r / ROWS);
-        const depth = 0.15 + ny * 0.85;
-        const px = vanishX + nx * (w * 0.55) * depth;
-        const py = vanishY + ny * (h * 0.65);
-        row.push({ x: px, y: py, depth: depth });
+    // Bottom plane (X-Z) at y=0.5
+    for (var z = 0; z <= DEPTH; z++) {
+      var row = [];
+      for (var x = 0; x <= COLS; x++) {
+        var nx = (x / COLS) * 2 - 1;
+        var nz = z / DEPTH;
+        row.push(project(nx, 0.55, nz));
       }
-      gridPoints.push(row);
+      grid.bottom.push(row);
+    }
+
+    // Back wall (X-Y) at z=1
+    for (var y = 0; y <= ROWS; y++) {
+      var row = [];
+      for (var x = 0; x <= COLS; x++) {
+        var nx = (x / COLS) * 2 - 1;
+        var ny = 0.55 - (y / ROWS) * 0.85;
+        row.push(project(nx, ny, 1));
+      }
+      grid.back.push(row);
+    }
+
+    // Left wall (Z-Y) at x=-1
+    for (var y = 0; y <= ROWS; y++) {
+      var row = [];
+      for (var z = 0; z <= DEPTH; z++) {
+        var nz = z / DEPTH;
+        var ny = 0.55 - (y / ROWS) * 0.85;
+        row.push(project(-1, ny, nz));
+      }
+      grid.left.push(row);
+    }
+
+    // Right wall (Z-Y) at x=+1
+    for (var y = 0; y <= ROWS; y++) {
+      var row = [];
+      for (var z = 0; z <= DEPTH; z++) {
+        var nz = z / DEPTH;
+        var ny = 0.55 - (y / ROWS) * 0.85;
+        row.push(project(1, ny, nz));
+      }
+      grid.right.push(row);
     }
   }
 
-  // Build an L-shaped path along grid lines from (r1,c1) to (r2,c2)
-  function buildGridPath(r1, c1, r2, c2) {
-    var path = [];
-    var r = r1, c = c1;
-    path.push({ r: r, c: c });
+  function drawPlane(plane, maxR, maxC, baseAlpha) {
+    for (var r = 0; r <= maxR; r++) {
+      ctx.beginPath();
+      var bright = r % 4 === 0;
+      for (var c = 0; c <= maxC; c++) {
+        var p = plane[r][c];
+        var a = baseAlpha * (1 - p.z3 * 0.5);
+        if (c === 0) {
+          ctx.strokeStyle = 'rgba(255,51,51,' + (bright ? a * 1.8 : a) + ')';
+          ctx.lineWidth = bright ? 1.0 : 0.5;
+          ctx.moveTo(p.x, p.y);
+        } else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+    }
+    for (var c = 0; c <= maxC; c++) {
+      ctx.beginPath();
+      var bright = c % 4 === 0;
+      for (var r = 0; r <= maxR; r++) {
+        var p = plane[r][c];
+        var a = baseAlpha * (1 - p.z3 * 0.5);
+        if (r === 0) {
+          ctx.strokeStyle = 'rgba(255,51,51,' + (bright ? a * 1.8 : a) + ')';
+          ctx.lineWidth = bright ? 1.0 : 0.5;
+          ctx.moveTo(p.x, p.y);
+        } else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+    }
+  }
 
-    // Randomly choose: move horizontal first or vertical first
-    if (Math.random() < 0.5) {
-      // Horizontal then vertical
-      var cDir = c2 > c1 ? 1 : -1;
-      while (c !== c2) { c += cDir; path.push({ r: r, c: c }); }
-      var rDir = r2 > r1 ? 1 : -1;
-      while (r !== r2) { r += rDir; path.push({ r: r, c: c }); }
+  // Edge glow at plane intersections
+  function drawEdge(p1, p2) {
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,51,51,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+  }
+
+  function drawGrid() {
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    // Draw back first (farthest), then walls, then bottom (closest)
+    drawPlane(grid.back, ROWS, COLS, 0.08);
+    drawPlane(grid.left, ROWS, DEPTH, 0.10);
+    drawPlane(grid.right, ROWS, DEPTH, 0.10);
+    drawPlane(grid.bottom, DEPTH, COLS, 0.14);
+
+    // Glowing edges where planes meet
+    // Bottom-left edge
+    drawEdge(grid.bottom[0][0], grid.bottom[DEPTH][0]);
+    // Bottom-right edge
+    drawEdge(grid.bottom[0][COLS], grid.bottom[DEPTH][COLS]);
+    // Bottom-back edge
+    drawEdge(grid.bottom[DEPTH][0], grid.bottom[DEPTH][COLS]);
+    // Left-back vertical
+    drawEdge(grid.left[0][DEPTH], grid.left[ROWS][DEPTH]);
+    // Right-back vertical
+    drawEdge(grid.right[0][DEPTH], grid.right[ROWS][DEPTH]);
+    // Back top edge
+    drawEdge(grid.back[ROWS][0], grid.back[ROWS][COLS]);
+
+    // Dots at intersections on bottom plane
+    for (var r = 0; r <= DEPTH; r += 4) {
+      for (var c = 0; c <= COLS; c += 4) {
+        var p = grid.bottom[r][c];
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,51,51,' + (0.3 * (1 - p.z3 * 0.5)) + ')';
+        ctx.arc(p.x, p.y, 1.5 * p.scale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // --- Multi-plane pathfinding ---
+  function getPlaneGrid(plane) { return grid[plane]; }
+  function getPlaneDims(plane) { return PLANE_DIMS[plane]; }
+
+  function getNeighbors(node) {
+    var plane = node.plane, r = node.r, c = node.c;
+    var dims = getPlaneDims(plane);
+    var neighbors = [];
+
+    if (r > 0) neighbors.push({ plane: plane, r: r-1, c: c });
+    if (r < dims.rows) neighbors.push({ plane: plane, r: r+1, c: c });
+    if (c > 0) neighbors.push({ plane: plane, r: r, c: c-1 });
+    if (c < dims.cols) neighbors.push({ plane: plane, r: r, c: c+1 });
+
+    // Cross-plane transitions
+    if (plane === 'bottom' && c === 0)         neighbors.push({ plane: 'left', r: 0, c: r });
+    if (plane === 'bottom' && c === dims.cols)  neighbors.push({ plane: 'right', r: 0, c: r });
+    if (plane === 'bottom' && r === dims.rows)  neighbors.push({ plane: 'back', r: 0, c: c });
+    if (plane === 'left'   && r === 0)          neighbors.push({ plane: 'bottom', r: c, c: 0 });
+    if (plane === 'right'  && r === 0)          neighbors.push({ plane: 'bottom', r: c, c: COLS });
+    if (plane === 'back'   && r === 0)          neighbors.push({ plane: 'bottom', r: DEPTH, c: c });
+
+    return neighbors;
+  }
+
+  function buildPath(startNode, endNode) {
+    // L-shaped path within a plane, with one optional cross-plane hop
+    var path = [];
+    var r = startNode.r, c = startNode.c;
+    var plane = startNode.plane;
+    path.push({ plane: plane, r: r, c: c });
+
+    var tr = endNode.r, tc = endNode.c;
+
+    if (startNode.plane === endNode.plane) {
+      // Same plane: L-shaped
+      if (Math.random() < 0.5) {
+        var cd = tc > c ? 1 : -1;
+        while (c !== tc) { c += cd; path.push({ plane: plane, r: r, c: c }); }
+        var rd = tr > r ? 1 : -1;
+        while (r !== tr) { r += rd; path.push({ plane: plane, r: r, c: c }); }
+      } else {
+        var rd = tr > r ? 1 : -1;
+        while (r !== tr) { r += rd; path.push({ plane: plane, r: r, c: c }); }
+        var cd = tc > c ? 1 : -1;
+        while (c !== tc) { c += cd; path.push({ plane: plane, r: r, c: c }); }
+      }
     } else {
-      // Vertical then horizontal
-      var rDir = r2 > r1 ? 1 : -1;
-      while (r !== r2) { r += rDir; path.push({ r: r, c: c }); }
-      var cDir = c2 > c1 ? 1 : -1;
-      while (c !== c2) { c += cDir; path.push({ r: r, c: c }); }
+      // Cross-plane: walk to edge, transition, then walk to dest
+      var dims = getPlaneDims(plane);
+      var edgeR, edgeC, transNode;
+
+      if (plane === 'bottom' && endNode.plane === 'left') {
+        edgeC = 0; edgeR = r;
+        while (c !== edgeC) { c += c > edgeC ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+        // Transition
+        path.push({ plane: 'left', r: 0, c: r });
+        plane = 'left'; r = 0; c = startNode.r;
+      } else if (plane === 'bottom' && endNode.plane === 'right') {
+        edgeC = dims.cols; edgeR = r;
+        while (c !== edgeC) { c += c > edgeC ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+        path.push({ plane: 'right', r: 0, c: startNode.r });
+        plane = 'right'; r = 0; c = startNode.r;
+      } else if (plane === 'bottom' && endNode.plane === 'back') {
+        edgeR = dims.rows;
+        while (r !== edgeR) { r += 1; path.push({ plane: plane, r: r, c: c }); }
+        path.push({ plane: 'back', r: 0, c: c });
+        plane = 'back'; r = 0;
+      } else {
+        // For other transitions, just do same-plane walk
+        tr = endNode.r; tc = endNode.c;
+      }
+
+      // Now walk to final dest in the new plane
+      tr = endNode.r; tc = endNode.c;
+      if (Math.random() < 0.5) {
+        while (c !== tc) { c += c > tc ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+        while (r !== tr) { r += r > tr ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+      } else {
+        while (r !== tr) { r += r > tr ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+        while (c !== tc) { c += c > tc ? -1 : 1; path.push({ plane: plane, r: r, c: c }); }
+      }
     }
     return path;
   }
 
-  function rebuildPacketPath(p) {
-    // Recalculate pixel positions for existing grid path
-    if (!p.gridPath || !gridPoints.length) return;
-    p.waypoints = p.gridPath.map(function(g) {
-      var pt = gridPoints[g.r] && gridPoints[g.r][g.c];
-      return pt ? { x: pt.x, y: pt.y } : { x: 0, y: 0 };
-    });
-    // Recalculate segment distances
-    p.segDists = [];
-    p.totalDist = 0;
-    for (var i = 1; i < p.waypoints.length; i++) {
-      var dx = p.waypoints[i].x - p.waypoints[i-1].x;
-      var dy = p.waypoints[i].y - p.waypoints[i-1].y;
-      var d = Math.sqrt(dx*dx + dy*dy);
-      p.segDists.push(d);
-      p.totalDist += d;
-    }
+  function nodeToPixel(node) {
+    var g = grid[node.plane];
+    if (!g || !g[node.r] || !g[node.r][node.c]) return { x: 0, y: 0 };
+    var pt = g[node.r][node.c];
+    return { x: pt.x, y: pt.y };
   }
 
-  function spawnPacket() {
-    if (packets.length >= MAX_PACKETS) return;
-
-    var r1 = Math.floor(Math.random() * (ROWS + 1));
-    var c1 = Math.floor(Math.random() * (COLS + 1));
-    var r2 = Math.floor(Math.random() * (ROWS + 1));
-    var c2 = Math.floor(Math.random() * (COLS + 1));
-
-    // Ensure minimum manhattan distance
-    while (Math.abs(r2 - r1) + Math.abs(c2 - c1) < 6) {
-      r2 = Math.floor(Math.random() * (ROWS + 1));
-      c2 = Math.floor(Math.random() * (COLS + 1));
-    }
-
-    var gridPath = buildGridPath(r1, c1, r2, c2);
-    var waypoints = gridPath.map(function(g) {
-      var pt = gridPoints[g.r][g.c];
-      return { x: pt.x, y: pt.y };
-    });
-
-    // Precompute segment distances
-    var segDists = [];
-    var totalDist = 0;
+  function computeWaypoints(gridPath) {
+    var waypoints = gridPath.map(nodeToPixel);
+    var segDists = [], totalDist = 0;
     for (var i = 1; i < waypoints.length; i++) {
       var dx = waypoints[i].x - waypoints[i-1].x;
       var dy = waypoints[i].y - waypoints[i-1].y;
@@ -1353,61 +1503,64 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
       segDists.push(d);
       totalDist += d;
     }
+    return { waypoints: waypoints, segDists: segDists, totalDist: totalDist };
+  }
+
+  function rebuildPacketPath(p) {
+    if (!p.gridPath) return;
+    var wp = computeWaypoints(p.gridPath);
+    p.waypoints = wp.waypoints;
+    p.segDists = wp.segDists;
+    p.totalDist = wp.totalDist;
+  }
+
+  function randomNode() {
+    var plane = PLANES[Math.floor(Math.random() * PLANES.length)];
+    var dims = getPlaneDims(plane);
+    return {
+      plane: plane,
+      r: Math.floor(Math.random() * (dims.rows + 1)),
+      c: Math.floor(Math.random() * (dims.cols + 1))
+    };
+  }
+
+  function spawnPacket() {
+    if (packets.length >= MAX_PACKETS) return;
+
+    var start = randomNode();
+    var end = randomNode();
+
+    // Prefer cross-plane paths ~40% of time for visual interest
+    if (Math.random() < 0.4 && start.plane === end.plane) {
+      end = randomNode();
+    }
+
+    // Ensure minimum path length
+    var tries = 0;
+    while (start.plane === end.plane && Math.abs(start.r - end.r) + Math.abs(start.c - end.c) < 8 && tries < 10) {
+      end = randomNode();
+      tries++;
+    }
+
+    var gridPath = buildPath(start, end);
+    if (gridPath.length < 5) return;
+
+    var wp = computeWaypoints(gridPath);
+    if (wp.totalDist < 10) return;
 
     packets.push({
       gridPath: gridPath,
-      waypoints: waypoints,
-      segDists: segDists,
-      totalDist: totalDist,
+      waypoints: wp.waypoints,
+      segDists: wp.segDists,
+      totalDist: wp.totalDist,
       traveled: 0,
-      x: waypoints[0].x,
-      y: waypoints[0].y,
+      x: wp.waypoints[0].x,
+      y: wp.waypoints[0].y,
       speed: PACKET_SPEED + Math.random() * 2.0,
       size: 2 + Math.random() * 2,
       trail: [],
       glowSize: 10 + Math.random() * 14
     });
-  }
-
-  function drawGrid() {
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-
-    // Horizontal lines
-    for (let r = 0; r <= ROWS; r++) {
-      ctx.beginPath();
-      ctx.strokeStyle = r % 4 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
-      ctx.lineWidth = r % 4 === 0 ? 1.2 : 0.7;
-      for (let c = 0; c <= COLS; c++) {
-        const p = gridPoints[r][c];
-        if (c === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      }
-      ctx.stroke();
-    }
-
-    // Vertical lines
-    for (let c = 0; c <= COLS; c++) {
-      ctx.beginPath();
-      ctx.strokeStyle = c % 4 === 0 ? GRID_COLOR_BRIGHT : GRID_COLOR;
-      ctx.lineWidth = c % 4 === 0 ? 1.2 : 0.7;
-      for (let r = 0; r <= ROWS; r++) {
-        const p = gridPoints[r][c];
-        if (r === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      }
-      ctx.stroke();
-    }
-
-    // Dots at intersections
-    for (let r = 0; r <= ROWS; r += 4) {
-      for (let c = 0; c <= COLS; c += 4) {
-        const p = gridPoints[r][c];
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 51, 51, 0.3)';
-        ctx.arc(p.x, p.y, 1.8 * p.depth, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
   }
 
   function getPositionAtDistance(p, dist) {
@@ -1430,17 +1583,12 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
     for (var i = packets.length - 1; i >= 0; i--) {
       var p = packets[i];
       p.traveled += p.speed;
-
       p.trail.push({ x: p.x, y: p.y });
       if (p.trail.length > 20) p.trail.shift();
-
       var pos = getPositionAtDistance(p, p.traveled);
-      p.x = pos.x;
-      p.y = pos.y;
-
+      p.x = pos.x; p.y = pos.y;
       if (p.traveled >= p.totalDist) {
-        var last = p.waypoints[p.waypoints.length - 1];
-        drawArrivalBurst(last.x, last.y);
+        drawArrivalBurst(p.waypoints[p.waypoints.length-1].x, p.waypoints[p.waypoints.length-1].y);
         packets.splice(i, 1);
       }
     }
@@ -1448,70 +1596,47 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
   function drawPackets() {
     packets.forEach(function(p) {
-      // Trail
       for (var t = 0; t < p.trail.length; t++) {
         var alpha = (t / p.trail.length) * 0.5;
-        var size = (t / p.trail.length) * p.size * 0.7;
+        var sz = (t / p.trail.length) * p.size * 0.7;
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 51, 51, ' + alpha + ')';
-        ctx.arc(p.trail[t].x, p.trail[t].y, size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,51,51,' + alpha + ')';
+        ctx.arc(p.trail[t].x, p.trail[t].y, sz, 0, Math.PI * 2);
         ctx.fill();
       }
-
-      // Glow
-      var gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.glowSize);
-      gradient.addColorStop(0, 'rgba(255, 51, 51, 0.35)');
-      gradient.addColorStop(1, 'rgba(255, 51, 51, 0)');
-      ctx.beginPath();
-      ctx.fillStyle = gradient;
-      ctx.arc(p.x, p.y, p.glowSize, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Dot
-      ctx.beginPath();
-      ctx.fillStyle = PACKET_COLOR;
-      ctx.shadowColor = PACKET_COLOR;
-      ctx.shadowBlur = 8;
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
+      var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.glowSize);
+      grad.addColorStop(0, 'rgba(255,51,51,0.35)');
+      grad.addColorStop(1, 'rgba(255,51,51,0)');
+      ctx.beginPath(); ctx.fillStyle = grad;
+      ctx.arc(p.x, p.y, p.glowSize, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.fillStyle = PACKET_COLOR;
+      ctx.shadowColor = PACKET_COLOR; ctx.shadowBlur = 8;
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
     });
   }
 
   function drawArrivalBurst(x, y) {
-    var gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
-    gradient.addColorStop(0, 'rgba(255, 51, 51, 0.5)');
-    gradient.addColorStop(1, 'rgba(255, 51, 51, 0)');
-    ctx.beginPath();
-    ctx.fillStyle = gradient;
-    ctx.arc(x, y, 30, 0, Math.PI * 2);
-    ctx.fill();
+    var grad = ctx.createRadialGradient(x, y, 0, x, y, 30);
+    grad.addColorStop(0, 'rgba(255,51,51,0.5)');
+    grad.addColorStop(1, 'rgba(255,51,51,0)');
+    ctx.beginPath(); ctx.fillStyle = grad;
+    ctx.arc(x, y, 30, 0, Math.PI * 2); ctx.fill();
   }
 
   var frameCount = 0;
-
   function animate() {
     drawGrid();
     updatePackets();
     drawPackets();
-
     frameCount++;
-    // Spawn packets much more frequently
-    if (frameCount % (15 + Math.floor(Math.random() * 15)) === 0) {
-      spawnPacket();
-    }
-
+    if (frameCount % (12 + Math.floor(Math.random() * 12)) === 0) spawnPacket();
     requestAnimationFrame(animate);
   }
 
   window.addEventListener('resize', resize);
   resize();
-
-  // Start with more packets immediately
-  for (var i = 0; i < 10; i++) {
-    setTimeout(function() { spawnPacket(); }, i * 200);
-  }
-
+  for (var i = 0; i < 14; i++) setTimeout(spawnPacket, i * 150);
   animate();
 })();
 </script>
