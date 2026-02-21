@@ -1248,8 +1248,9 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   var MAX_PACKETS = 120;
   var BASE_SPEED = 2.5;
   var PACKET_COLOR = '#ff3333';
-  var BOTTOM_NY = 0.72;
-  var WALL_SPAN = 1.25;
+  var BOTTOM_NY = 0.72;   // y-position of floor in projection coords
+  var WALL_SPAN = 1.25;   // recomputed in resize(); initial value unused
+  var PERSP = 0.55;       // perspective factor (how much z shrinks things)
 
   var PLANES = ['bottom', 'back', 'left', 'right'];
   var PLANE_DIMS = {
@@ -1260,7 +1261,7 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
   };
 
   function project(nx, ny, nz) {
-    var scale = 1 - nz * 0.55;
+    var scale = 1 - nz * PERSP;
     return {
       x: vanishX + nx * projW * scale,
       y: vanishY + ny * projH * scale,
@@ -1276,15 +1277,22 @@ mg.<span class="fn">shared_set</span>(<span class="str">"signals"</span>, <span 
 
     var cw = canvas.offsetWidth;
     var ch = canvas.offsetHeight;
-    var aspect = cw / ch;
 
-    // Autoscale projection to fill viewport
+    // Vanish point: centered, upper 20% of height
     vanishX = cw * 0.5;
-    vanishY = ch * 0.18;
-    // Width: front face should span ~96% of viewport width
-    projW = cw * 0.48;
-    // Height: scale to fill vertically — taller screens get more vertical spread
-    projH = ch * (aspect > 1.6 ? 0.82 : aspect > 1.2 ? 0.78 : 0.72);
+    vanishY = ch * 0.20;
+
+    // projW: front face left/right edges exactly touch viewport edges
+    // project(±1, *, 0).x = vanishX ± projW  →  projW = vanishX = cw/2
+    projW = cw * 0.5;
+
+    // projH: front floor edge exactly touches viewport bottom
+    // project(0, BOTTOM_NY, 0).y = vanishY + BOTTOM_NY * projH = ch
+    projH = (ch - vanishY) / BOTTOM_NY;
+
+    // WALL_SPAN: back wall top edge exactly touches viewport top
+    // project(0, BOTTOM_NY - WALL_SPAN, 1).y = vanishY + (BOTTOM_NY - WALL_SPAN) * projH * (1-PERSP) = 0
+    WALL_SPAN = BOTTOM_NY + vanishY / (projH * (1 - PERSP));
 
     buildGrid();
     packets.forEach(rebuildPacketPath);
