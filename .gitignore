@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Build output
+dist/
+.wrangler/
+.dev.vars
+
+# Secrets
+.env
+.env.local
+.env.production
+*.env
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Cloudflare
+.wrangler/
